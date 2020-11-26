@@ -1,0 +1,6 @@
+#! /bin/bash
+
+pip3 uninstall gdc_client
+rm -rf  build/ dist/
+python3 setup.py install
+echo "Done." 
