@@ -9,7 +9,9 @@ from .client import BaseClient
 # Aliases
 COMMON_ALIASES = {
     "_get_cases": 'get_cases',
-    "_get_fields": 'get_fields'
+    "_get_mappings": 'get_mappings',
+    "_get_genes": 'get_genes',
+    "_get_ssm_occurrences": 'get_ssm_occurrences',
         }
 
 # API specific aliases
@@ -21,6 +23,8 @@ COMMON_KWARGS = {
     "_projects_endpoint": '/projects',
     "_files_endpoint": '/files',
     "_cases_endpoint": '/cases',
+    "_genes_endpoint": '/genes',
+    "_ssm_occurrences_endpoint": '/ssm_occurrences',
     "_app_id": None,
     "_app_key": None,
 }

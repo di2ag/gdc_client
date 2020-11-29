@@ -33,7 +33,7 @@ class BaseClient:
 
     def _get(self, url, params=None, verbose=True):
         params = params or {}
-        res = requests.get(url, params=params)
+        res = requests.get(url, json=params)
         from_cache = getattr(res, 'from_cache', False)
         return from_cache, res
 
@@ -42,7 +42,7 @@ class BaseClient:
         from_cache = getattr(res, 'from_cache', False)
         return from_cache, res
 
-    def _get_fields(self, endpoint, **kwargs):
+    def _get_mappings(self, endpoint, **kwargs):
         """ Returns a list of available fields for each endpoint type.
 
             :param endpoint: The endpoint to get field information. Options: projects, files, cases, annotations.
@@ -97,6 +97,29 @@ class BaseClient:
         from_cache, out = self._post(_url, params, verbose=verbose)
         if verbose and from_cache:
             print('Result from cache.')
+        return out.json()
+
+    def _get_ssm_occurrences(self, case_submitter_id, ssm_occurrence_id=None, **kwargs):
+        params = {}
+        if ssm_occurrence_id is None:
+            _url = self.url + self._ssm_occurrences_endpoint
+            _filter = {
+                    "op": "in",
+                    "content": {
+                            "field": "case.submitter_id",
+                            "value": [case_submitter_id]
+                            }
+                    }
+            params["filters"] = _filter
+            params["expand"] = "case"
+        else:
+            _url = self.url + self._ssm_occurrences_endpoint + '/{}'.format(ssm_occurrence_id)
+            params["expand"] = 'case,ssm.consequence.transcript,ssm.consequence.transcript.gene'
+        params["size"] = kwargs.pop('size', 1000)
+        verbose = kwargs.pop('verbose', True)
+        from_cache, out = self._post(_url, params, verbose=verbose)
+        if verbose and from_cache:
+            print('Result from cache')
         return out.json()
 
     def _set_caching(self, cache_db=None, verbose=True, **kwargs):
